@@ -1,7 +1,7 @@
 package day2
 
 import (
-	"fmt"
+	"math"
 	"strconv"
 	"strings"
 )
@@ -33,9 +33,9 @@ func ParseLinePart1(line string) (int, error) {
 
 	game := &Game{
 		id:    id,
-		red:   0,
-		blue:  0,
-		green: 0,
+		red:   1,
+		blue:  1,
+		green: 1,
 	}
 
 	cubeSubsets := strings.Split(parts[1], ";")
@@ -56,15 +56,54 @@ func ParseLinePart1(line string) (int, error) {
 				game.blue = digit
 			}
 		}
+		// The Elf would first like to know which games would have been possible if the bag contained only 12 red cubes, 13 green cubes, and 14 blue cubes?
 
 		if game.red > 12 || game.green > 13 || game.blue > 14 {
 			return 0, nil
 		}
 
-		fmt.Printf("%d => %d,%d,%d\n", game.id, game.red, game.green, game.blue)
+		// fmt.Printf("%d => %d,%d,%d\n", game.id, game.red, game.green, game.blue)
 	}
 
 	return game.id, nil
 }
 
-// The Elf would first like to know which games would have been possible if the bag contained only 12 red cubes, 13 green cubes, and 14 blue cubes?
+func ParseLinePart2(line string) (int, error) {
+	parts := strings.Split(line, ":")
+
+	id, err := strconv.Atoi(strings.Split(parts[0], " ")[1])
+	if err != nil {
+		return 0, err
+	}
+
+	game := &Game{
+		id:    id,
+		red:   math.MinInt,
+		blue:  math.MinInt,
+		green: math.MinInt,
+	}
+
+	cubeSubsets := strings.Split(parts[1], ";")
+	for _, cubeSubset := range cubeSubsets {
+		cubes := strings.Split(cubeSubset, ",")
+
+		for _, cube := range cubes {
+			cubeParts := strings.Split(strings.Trim(cube, " "), " ")
+
+			digit, _ := strconv.Atoi(cubeParts[0])
+			color := cubeParts[1]
+
+			if color == "red" {
+				game.red = max(game.red, digit)
+			} else if color == "green" {
+				game.green = max(game.green, digit)
+			} else if color == "blue" {
+				game.blue = max(game.blue, digit)
+			}
+		}
+
+	}
+	// fmt.Printf("%d => %d,%d,%d\n", game.id, game.red, game.green, game.blue)
+
+	return game.red * game.green * game.blue, nil
+}
