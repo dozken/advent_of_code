@@ -1,9 +1,9 @@
 package day1_test
 
 import (
-	"testing"
-
 	"github.com/dozken/aoc23/pkg/day1"
+	"github.com/dozken/aoc23/pkg/util"
+	"testing"
 )
 
 func testDataP1() string {
@@ -14,7 +14,7 @@ treb7uchetzu`
 }
 
 func testDataP2() string {
-  return `two1nine
+	return `two1nine
 eightwothree
 abcone2threexyz
 xtwone3four
@@ -24,7 +24,7 @@ zoneight234
 }
 
 func TestP1_testData(t *testing.T) {
-	got := day1.SumFromText(testDataP1(), day1.ParseLinePart1)
+	got := util.SumFromText(testDataP1(), day1.ParseLinePart1)
 	expected := 142
 	if got != expected {
 		t.Errorf("P1() = %v, want %v", got, expected)
@@ -32,7 +32,7 @@ func TestP1_testData(t *testing.T) {
 }
 
 func TestP1FromFile_testData(t *testing.T) {
-	got := day1.SumFromFile("p1.input", day1.ParseLinePart1)
+	got := util.SumFromFile("p1.input", day1.ParseLinePart1)
 	expected := 54239
 	if got != expected {
 		t.Errorf("P1FromFile() = %v, want %v", got, expected)
@@ -40,7 +40,7 @@ func TestP1FromFile_testData(t *testing.T) {
 }
 
 func TestP2_testData(t *testing.T) {
-	actual := day1.SumFromText(testDataP2(), day1.ParseLinePart2)
+	actual := util.SumFromText(testDataP2(), day1.ParseLinePart2)
 	expected := 281
 	if actual != expected {
 		t.Errorf("P2() = %v, want %v", actual, expected)
@@ -48,10 +48,9 @@ func TestP2_testData(t *testing.T) {
 }
 
 func TestP2FromFile_testData(t *testing.T) {
-	got := day1.SumFromFile("p1.input", day1.ParseLinePart2)
+	got := util.SumFromFile("p1.input", day1.ParseLinePart2)
 	expected := 54239
 	if got != expected {
 		t.Errorf("P1FromFile() = %v, want %v", got, expected)
 	}
 }
-
