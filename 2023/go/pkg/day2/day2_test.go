@@ -32,7 +32,7 @@ func TestP2_sample(t *testing.T) {
 
 func TestP2_data(t *testing.T) {
     got := util.SumFromFile("p1.data", day2.ParseLinePart2)
-    expected := 2105
+    expected := 72422
     if got != expected {
         t.Errorf("P2() = %v, want %v", got, expected)
     }
