@@ -1,7 +1,6 @@
 package day3
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -19,10 +18,9 @@ type NumberCoordinate struct {
 	number int
 }
 
-func SumFromFile(filePath string) int {
-	result := 0
-	content, _ := os.ReadFile(filePath)
-	array2D := create2DArray(string(content))
+type fn func([][]string) int
+
+func Part1(array2D [][]string) int {
 	directions := []Coordinate{
 		{-1, 1}, {0, 1}, {1, 1},
 		{-1, 0}, {1, 0},
@@ -59,17 +57,83 @@ func SumFromFile(filePath string) int {
 					}
 				}
 			}
-			fmt.Printf("%s", array2D[y][x])
+			// fmt.Printf("%s", array2D[y][x])
 		}
-		fmt.Println()
+		// fmt.Println()
 	}
 
-	// log.Printf("\nSeen: %v\n", seenCoordinates)
+	result := 0
+
 	for _, nc := range seenCoordinates {
 		result += nc.number
 	}
 
 	return result
+}
+func Part2(array2D [][]string) int {
+	directions := []Coordinate{
+		{-1, 1}, {0, 1}, {1, 1},
+		{-1, 0}, {1, 0},
+		{-1, -1}, {0, -1}, {1, -1},
+	}
+	var seenCoordinates []NumberCoordinate
+
+	var neighboors []int
+
+	result := 0
+	for y := 0; y < len(array2D)-1; y++ {
+		for x := 0; x < len(array2D[y])-1; x++ {
+
+			if array2D[y][x] == "*" {
+				// fmt.Printf("%s", array2D[y][x])
+				for _, dir := range directions {
+					yCoor := y + dir.y
+					xCoor := x + dir.x
+					position := array2D[yCoor][xCoor]
+
+					if isDigit(position) && !isSeen(seenCoordinates, xCoor, yCoor) {
+						// fmt.Printf("%s [%d, %d]", position, xCoor, yCoor)
+						num := position
+
+						xLeft := xCoor - 1
+						for ; xLeft >= 0 && isDigit(array2D[yCoor][xLeft]); xLeft-- {
+							num = array2D[yCoor][xLeft] + num
+						}
+						xRight := xCoor + 1
+						for ; xRight < len(array2D)-1 && isDigit(array2D[yCoor][xRight]); xRight++ {
+							num = num + array2D[yCoor][xRight]
+						}
+
+						number, _ := strconv.Atoi(num)
+						seenCoordinates = append(seenCoordinates, NumberCoordinate{xLeft: xLeft + 1, xRight: xRight - 1, y: yCoor, number: number})
+
+						neighboors = append(neighboors, number)
+						// fmt.Println(neighboors)
+						if len(neighboors) == 2 {
+							result += neighboors[0] * neighboors[1]
+						}
+						// fmt.Printf(">%s<", num)
+					}
+				}
+
+				neighboors = nil
+			}
+			// fmt.Printf("%s", array2D[y][x])
+		}
+		// fmt.Println()
+	}
+
+	return result
+}
+
+// TODO improvements:
+// 1. store symbol position while walking the file
+// 2. run only on stored symbol positions which lowers the loop count
+func SumFromFile(filePath string, execute fn) int {
+	content, _ := os.ReadFile(filePath)
+	array2D := create2DArray(string(content))
+
+	return execute(array2D)
 }
 
 func isSeen(list []NumberCoordinate, x int, y int) bool {
@@ -86,6 +150,7 @@ func isSymbol(char string) bool {
 	return !isDigit(char) && !isPeriod
 }
 
+// works fine for single digits
 func isDigit(char string) bool {
 	return "0" <= char && char <= "9"
 }
